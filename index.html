@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL 단축기</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔗 URL 단축기</h1>
+            <p>긴 URL을 짧고 간편하게 만들어보세요</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <input type="url" id="urlInput" placeholder="단축할 URL을 입력하세요 (예: https://example.com/very/long/url)" />
+                <button id="shortenBtn">단축하기</button>
+            </div>
+
+            <div id="result" class="result-section hidden">
+                <h3>단축된 URL</h3>
+                <div class="result-box">
+                    <input type="text" id="shortUrl" readonly />
+                    <button id="copyBtn">복사</button>
+                </div>
+                <p id="copyMessage" class="copy-message hidden">복사되었습니다!</p>
+            </div>
+
+            <div id="history" class="history-section">
+                <h3>최근 단축 기록</h3>
+                <ul id="historyList"></ul>
+            </div>
+        </main>
+
+        <footer>
+            <p>GitHub Pages에서 호스팅 중 | 로컬 스토리지 기반</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
