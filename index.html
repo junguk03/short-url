@@ -16,7 +16,12 @@
         <main>
             <div class="input-section">
                 <input type="url" id="urlInput" placeholder="단축할 URL을 입력하세요 (예: https://example.com/very/long/url)" />
+                <input type="text" id="aliasInput" placeholder="별칭 (선택, 예: my-link)" />
                 <button id="shortenBtn">단축하기</button>
+            </div>
+
+            <div id="warning" class="warning-section hidden">
+                <p id="warningMessage"></p>
             </div>
 
             <div id="result" class="result-section hidden">
@@ -35,7 +40,17 @@
         </main>
 
         <footer>
-            <p>GitHub Pages에서 호스팅 중 | 로컬 스토리지 기반</p>
+            <div class="info-box">
+                <p><strong>💡 알아두세요</strong></p>
+                <ul>
+                    <li>이 서비스는 <strong>학습 목적</strong>으로 만들어졌습니다</li>
+                    <li>GitHub Pages 특성상 단축 URL이 원본보다 길 수 있습니다</li>
+                    <li>진짜 짧은 URL을 원한다면 <strong>커스텀 도메인</strong>을 연결하거나 bit.ly 등을 사용하세요</li>
+                    <li>단축 기록은 <strong>이 브라우저에만</strong> 저장됩니다</li>
+                </ul>
+            </div>
+            <p class="help-text">⚠️ 리디렉션이 안 되면 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd> 을 눌러 새로고침하세요</p>
+            <p class="copyright">GitHub Pages에서 호스팅 중 | 로컬 스토리지 기반</p>
         </footer>
     </div>
 
