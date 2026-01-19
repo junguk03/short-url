@@ -207,15 +207,11 @@ header p {
     margin-right: 15px;
 }
 
-#historyList .short-url {
+#historyList .short-code {
     color: #667eea;
     font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-#historyList .short-url:hover {
-    text-decoration: underline;
+    font-size: 0.85rem;
+    flex-shrink: 0;
 }
 
 .hidden {

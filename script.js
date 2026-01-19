@@ -107,17 +107,19 @@ function shortenUrl() {
     }
 
     // 기록에 저장
-    saveToHistory(originalUrl, shortCode);
+    const savedCode = saveToHistory(originalUrl, shortCode);
 
-    // 결과 표시
-    shortUrlInput.value = shortUrl;
+    // 실제 저장된 코드로 URL 생성 (중복일 경우 기존 코드 사용)
+    const finalShortUrl = `${baseUrl}#${savedCode}`;
+
+    // 결과 표시 (항상 최신 결과로 업데이트)
+    shortUrlInput.value = finalShortUrl;
     resultSection.classList.remove('hidden');
 
     // 기록 목록 업데이트
     loadHistory();
 
-    // 입력 필드 초기화
-    urlInput.value = '';
+    // 별칭 입력만 초기화 (URL은 유지)
     aliasInput.value = '';
 }
 
@@ -214,8 +216,6 @@ function loadHistory() {
         return;
     }
 
-    const baseUrl = window.location.origin + window.location.pathname;
-
     history.forEach(item => {
         const li = document.createElement('li');
 
@@ -224,18 +224,12 @@ function loadHistory() {
         originalSpan.textContent = item.originalUrl;
         originalSpan.title = item.originalUrl;
 
-        const shortLink = document.createElement('a');
-        shortLink.className = 'short-url';
-        shortLink.href = `${baseUrl}#${item.shortCode}`;
-        shortLink.textContent = `#${item.shortCode}`;
-        shortLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            navigator.clipboard.writeText(`${baseUrl}#${item.shortCode}`);
-            showToast('URL이 복사되었습니다!');
-        });
+        const shortSpan = document.createElement('span');
+        shortSpan.className = 'short-code';
+        shortSpan.textContent = `#${item.shortCode}`;
 
         li.appendChild(originalSpan);
-        li.appendChild(shortLink);
+        li.appendChild(shortSpan);
         historyList.appendChild(li);
     });
 }
