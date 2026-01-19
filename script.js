@@ -93,26 +93,32 @@ function shortenUrl() {
         showWarning(`⚡ 이 URL은 이미 충분히 짧습니다! (${originalUrl.length}자) 그래도 단축할게요.`, 'info');
     }
 
-    // 짧은 코드 생성 (커스텀 별칭 또는 랜덤)
-    const shortCode = customAlias || generateShortCode();
-
-    // 현재 페이지 URL을 기반으로 단축 URL 생성
+    // 현재 페이지 URL 기반
     const baseUrl = window.location.origin + window.location.pathname;
-    const shortUrl = `${baseUrl}#${shortCode}`;
 
-    // 단축 URL이 원본보다 긴 경우 경고
-    if (shortUrl.length >= originalUrl.length) {
-        const diff = shortUrl.length - originalUrl.length;
-        showWarning(`📢 GitHub Pages 특성상 단축 URL(${shortUrl.length}자)이 원본(${originalUrl.length}자)보다 ${diff}자 더 깁니다. 커스텀 도메인을 연결하면 진짜 단축이 됩니다!`, 'info');
+    // 이미 등록된 URL인지 확인
+    const history = getHistory();
+    const existingEntry = history.find(item => item.originalUrl === originalUrl);
+
+    let finalCode;
+    if (existingEntry) {
+        // 이미 있는 URL이면 기존 코드 사용
+        finalCode = existingEntry.shortCode;
+    } else {
+        // 새 URL이면 새 코드 생성 및 저장
+        finalCode = customAlias || generateShortCode();
+        saveToHistory(originalUrl, finalCode);
     }
 
-    // 기록에 저장
-    const savedCode = saveToHistory(originalUrl, shortCode);
+    const finalShortUrl = `${baseUrl}#${finalCode}`;
 
-    // 실제 저장된 코드로 URL 생성 (중복일 경우 기존 코드 사용)
-    const finalShortUrl = `${baseUrl}#${savedCode}`;
+    // 단축 URL이 원본보다 긴 경우 경고
+    if (finalShortUrl.length >= originalUrl.length) {
+        const diff = finalShortUrl.length - originalUrl.length;
+        showWarning(`📢 GitHub Pages 특성상 단축 URL(${finalShortUrl.length}자)이 원본(${originalUrl.length}자)보다 ${diff}자 더 깁니다. 커스텀 도메인을 연결하면 진짜 단축이 됩니다!`, 'info');
+    }
 
-    // 결과 표시 (항상 최신 결과로 업데이트)
+    // 결과 표시
     shortUrlInput.value = finalShortUrl;
     resultSection.classList.remove('hidden');
 
@@ -185,12 +191,6 @@ function getHistory() {
 function saveToHistory(originalUrl, shortCode) {
     const history = getHistory();
 
-    // 중복 확인 (같은 원본 URL이 있으면 기존 것 사용)
-    const existing = history.find(item => item.originalUrl === originalUrl);
-    if (existing) {
-        return existing.shortCode;
-    }
-
     // 새 항목 추가 (최대 10개 유지)
     history.unshift({
         originalUrl,
@@ -203,7 +203,6 @@ function saveToHistory(originalUrl, shortCode) {
     }
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-    return shortCode;
 }
 
 // 기록 목록 불러오기
