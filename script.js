@@ -96,19 +96,9 @@ function shortenUrl() {
     // 현재 페이지 URL 기반
     const baseUrl = window.location.origin + window.location.pathname;
 
-    // 이미 등록된 URL인지 확인
-    const history = getHistory();
-    const existingEntry = history.find(item => item.originalUrl === originalUrl);
-
-    let finalCode;
-    if (existingEntry) {
-        // 이미 있는 URL이면 기존 코드 사용
-        finalCode = existingEntry.shortCode;
-    } else {
-        // 새 URL이면 새 코드 생성 및 저장
-        finalCode = customAlias || generateShortCode();
-        saveToHistory(originalUrl, finalCode);
-    }
+    // 새 코드 생성 및 저장
+    const finalCode = customAlias || generateShortCode();
+    saveToHistory(originalUrl, finalCode);
 
     const finalShortUrl = `${baseUrl}#${finalCode}`;
 
