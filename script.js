@@ -88,25 +88,26 @@ function shortenUrl() {
         }
     }
 
+    // URL 파싱해서 도메인 추출
+    const urlObj = new URL(originalUrl);
+    const domain = urlObj.origin; // https://analytics.google.com
+
+    // 별칭 생성
+    const finalCode = customAlias || generateShortCode();
+
+    // 단축 URL = 도메인 + / + 별칭
+    const finalShortUrl = `${domain}/${finalCode}`;
+
     // 이미 짧은 URL 감지
     if (originalUrl.length <= SHORT_URL_THRESHOLD) {
-        showWarning(`⚡ 이 URL은 이미 충분히 짧습니다! (${originalUrl.length}자) 그래도 단축할게요.`, 'info');
+        showWarning(`⚡ 이 URL은 이미 충분히 짧습니다! (${originalUrl.length}자)`, 'info');
+    } else if (finalShortUrl.length < originalUrl.length) {
+        const saved = originalUrl.length - finalShortUrl.length;
+        showWarning(`✅ ${saved}자 단축되었습니다! (${originalUrl.length}자 → ${finalShortUrl.length}자)`, 'info');
     }
 
-    // 현재 페이지 URL 기반
-    const baseUrl = window.location.origin + window.location.pathname;
-
-    // 새 코드 생성 및 저장
-    const finalCode = customAlias || generateShortCode();
-    saveToHistory(originalUrl, finalCode);
-
-    const finalShortUrl = `${baseUrl}#${finalCode}`;
-
-    // 단축 URL이 원본보다 긴 경우 경고
-    if (finalShortUrl.length >= originalUrl.length) {
-        const diff = finalShortUrl.length - originalUrl.length;
-        showWarning(`📢 GitHub Pages 특성상 단축 URL(${finalShortUrl.length}자)이 원본(${originalUrl.length}자)보다 ${diff}자 더 깁니다. 커스텀 도메인을 연결하면 진짜 단축이 됩니다!`, 'info');
-    }
+    // 기록에 저장
+    saveToHistory(originalUrl, finalCode, finalShortUrl);
 
     // 결과 표시
     shortUrlInput.value = finalShortUrl;
@@ -178,13 +179,14 @@ function getHistory() {
 }
 
 // 기록에 저장
-function saveToHistory(originalUrl, shortCode) {
+function saveToHistory(originalUrl, shortCode, shortUrl) {
     const history = getHistory();
 
     // 새 항목 추가 (최대 10개 유지)
     history.unshift({
         originalUrl,
         shortCode,
+        shortUrl,
         createdAt: new Date().toISOString()
     });
 
@@ -215,7 +217,8 @@ function loadHistory() {
 
         const shortSpan = document.createElement('span');
         shortSpan.className = 'short-code';
-        shortSpan.textContent = `#${item.shortCode}`;
+        shortSpan.textContent = item.shortUrl || `#${item.shortCode}`;
+        shortSpan.title = item.shortUrl || '';
 
         li.appendChild(originalSpan);
         li.appendChild(shortSpan);
